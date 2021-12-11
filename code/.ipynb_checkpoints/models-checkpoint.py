@@ -28,6 +28,7 @@ from nltk.sentiment import SentimentAnalyzer
 from nltk.sentiment.util import *
 
 
+
 def get_TFIDF_transformation(X_train, X_test, max_features ,ngram_range):
     TFID_vect = TfidfVectorizer(max_features = max_features ,ngram_range = ngram_range)
     #Transform the data using TF-IDF Vectorizer
@@ -35,6 +36,8 @@ def get_TFIDF_transformation(X_train, X_test, max_features ,ngram_range):
     X_test_TFIDF_Matrix  = TFID_vect.transform(X_test)
     number_of_features = len(TFID_vect.get_feature_names())
     return X_train_TFIDF_Matrix, X_test_TFIDF_Matrix, number_of_features
+
+
 
 
 def naive_bayes_count(X_train, X_test, y_train, y_test, max_features , ngram_range , display_evaluation= False):
@@ -98,5 +101,39 @@ def SVM_TFIDF(X_train, X_test, y_train, y_test, max_features, ngram_range , disp
     if (display_evaluation):
         evaluate_model(clf,  X_test_TFIDF, y_pred,y_test)
 
+
+def Tweet_to_GloVe(tweet,embeddings_index):
+    tweet_list = tweet.split()
+    tweet_list_filtered =  list(set(tweet_list) & set(embeddings_index.keys()))  #remove words not in embedding 
+    list_of_embeddings = np.array([embeddings_index[word] for word in tweet_list_filtered],dtype='float64')
+    x = np.mean(list_of_embeddings, axis = 0)
+    #x[np.isinf(x)] = 0 #sanitize infinity
+    return np.nan_to_num(x)
+
+def get_Glove_transformation(tweets, dimension):
+    with open('../Data/embeddings_index.pkl', 'rb') as f:
+        embeddings_index = pickle.load(f)
+    x = np.zeros((len(tweets), dimension))
+    i = 0
+    for  tweet in tweets:
+        x[i] = Tweet_to_GloVe(tweet,embeddings_index)
+        i += 1
+    return x
+def SVM_Glove(X_train, X_test, y_train, y_test, number_of_features, display_evaluation = False):
+    
+    X_train_glove = get_Glove_transformation(X_train, number_of_features)
+    X_test_glove = get_Glove_transformation(X_test, number_of_features)
+    
+    
+    clf = svm.SVC()
+    clf.fit( X_train_glove, y_train)
+    y_pred = clf.predict(X_test_glove)
+    
+    print("SVM MODEL with TFIDF transformation ")
+    print("with {} features selected \n ".format(number_of_features))
+    print("Accuracy:\n",get_accuracy(y_test,y_pred))
+    print(classification_report(y_test, y_pred))
+    if (display_evaluation):
+        evaluate_model(clf,  X_test_glove, y_pred,y_test)
   
 
