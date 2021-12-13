@@ -14,8 +14,8 @@ from sklearn.metrics import confusion_matrix
 
 
 
-PATH_TRAIN_POS = 'twitter-datasets/train_pos.txt'
-PATH_TRAIN_NEG = 'twitter-datasets/train_neg.txt'
+PATH_TRAIN_POS = '../Twitter_DataSet/train_pos.txt'
+PATH_TRAIN_NEG = '../Twitter_DataSet/train_neg.txt'
 
 
 def load_data(path_train_pos = PATH_TRAIN_POS , path_train_neg = PATH_TRAIN_NEG ):

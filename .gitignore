@@ -1,0 +1,8 @@
+.DS_Store
+Twitter_DataSet/.ipynb_checkpoints/*
+code/.DS_Store
+code/.ipynb_checkpoints/*
+cc.en.300.bin
+code/__pycache__/
+code/te_saved.pickle
+code/tr_saved.pickle
