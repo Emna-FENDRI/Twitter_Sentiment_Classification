@@ -1,8 +1,9 @@
 .DS_Store
-Twitter_DataSet/.ipynb_checkpoints/*
+Twitter_DataSet/*
 code/.DS_Store
 code/.ipynb_checkpoints/*
 cc.en.300.bin
 code/__pycache__/
 code/te_saved.pickle
 code/tr_saved.pickle
+code/training_data.npy
