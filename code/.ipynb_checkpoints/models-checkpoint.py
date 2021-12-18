@@ -104,8 +104,7 @@ def SVM_TFIDF(X_train, X_test, y_train, y_test, max_features, ngram_range , disp
         evaluate_model(clf,  X_test_TFIDF, y_pred,y_test)
 
 
-def Tweet_to_GloVe(tweet,embeddings_index):
-    tweet_list = tweet.split()
+def Tweet_to_GloVe(tweet_list,embeddings_index):
     #tweet_list_filtered =  list(set(tweet_list) & set(embeddings_index.keys()))  #remove words not in embedding 
     list_of_embeddings = np.array([embeddings_index.get(word, np.zeros(25)) for word in tweet_list],dtype='float64')
     x = np.mean(list_of_embeddings, axis = 0)

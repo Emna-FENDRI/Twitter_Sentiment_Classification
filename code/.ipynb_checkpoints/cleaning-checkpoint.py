@@ -2,7 +2,7 @@ import numpy as np
 import string
 import re
 from dictionaries import*
-
+from tqdm.notebook import tqdm
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
@@ -72,3 +72,20 @@ def handle_emoticons(text):
     text = re.sub('(h*eh+e*h*)+', "<laugh>", text)
     text= re.sub('(h*ih+i*h*)+', "<laugh>", text)
     return ' '.join(emoticons[w] if w in emoticons else w for w in text.split())
+
+def is_in_tag(word):
+    if word.startswith('<') and word.endswith('>'):
+        return True
+    return False
+
+def clean_tweets(tweets, text_processor):
+    # process words using text processor 
+    cleaned = [text_processor.pre_process_doc(s) for s in tqdm(tweets)]
+    # remove words with tags <>
+    cleaned = [list(filter(lambda word: not is_in_tag(word), tweet)) for tweet in tqdm(cleaned)]
+    # remove punctuation
+    cleaned =  [list(filter(lambda word: word not in list(string.punctuation), tweet)) for tweet in tqdm(cleaned)]
+    # remove stop words 
+    stop_words = list(set(stopwords.words('english')))
+    cleaned_tweets =  [list(filter(lambda word: word not in stop_words, tweet)) for tweet in tqdm(cleaned)]
+    return cleaned_tweets
