@@ -7,3 +7,4 @@ code/__pycache__/
 code/te_saved.pickle
 code/tr_saved.pickle
 code/training_data.npy
+code/test_data.npy
