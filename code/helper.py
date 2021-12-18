@@ -43,7 +43,7 @@ def split_data(pos_train , neg_train):
     X=  train_set.Text
     y= train_set.Target
     #SPLIT: Set same random_state to reproduce same result
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=13)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=13)
 
     print("Train_set Info: SIZE= {size}, POSITIVE Tweets ={pos:0.2f}%, NEGATIVE Tweets = {neg:0.2f}%".format( size= len(X_train),
                                                                            pos = len(y_train[y_train == 1])*100/len(X_train),
