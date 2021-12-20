@@ -6,12 +6,9 @@ from nltk.corpus import stopwords
 import string
 from tqdm import tqdm
 import fasttext
+import fasttext.util
 
-
-
-ft = fasttext.load_model('cc.en.300.bin')
-ft.get_dimension()
-
+WORD_VECTOR_DIM = 100
 
 def is_in_tag(word):
     if word.startswith('<') and word.endswith('>'):
@@ -31,14 +28,53 @@ def clean_tweets(tweets, text_processor):
     return cleaned_tweets
 
 
-def get_word_emb(tweet):
-    avg_vect = np.zeros(300)
+def get_word_emb(tweet, ft):
+    emb_matrix = []
+    avg_vect = np.zeros(WORD_VECTOR_DIM)
     for word in tweet:
-        avg_vect += ft.get_word_vector(word)
-    return avg_vect / 300
+        emb = ft.get_word_vector(word)
+        avg_vect += emb
+        emb_matrix.append(emb)
+    return (avg_vect / WORD_VECTOR_DIM), emb_matrix
 
+def get_word_embeddings(ft):
+    POS_PATH = "clean_pos_train_with_stopWords.txt"
+    NEG_PATH = "clean_neg_train_with_stopWords.txt"
 
-def pre_process_training_data():
+    pos_tweets = []
+    neg_tweets = []
+    with open(POS_PATH,"r") as f:
+        pos_tweets = f.readlines()
+        f.close()
+    with open(NEG_PATH, "r") as f:
+        neg_tweets = f.readlines()
+        f.close()
+    print(len(pos_tweets))
+    print(len(neg_tweets))
+    
+    training_data_avg = []
+    training_data_matrix = []
+    for tweet in tqdm(neg_tweets):
+        emb, emb_matrix = get_word_emb(tweet, ft)
+        training_data_avg.append([np.array(emb), np.array([1.0, 0.0])])
+        training_data_matrix.append([np.array(emb_matrix), np.array([1.0, 0.0])])
+
+    for tweet in tqdm(pos_tweets):
+        emb, emb_matrix = get_word_emb(tweet)
+        training_data_avg.append([np.array(emb), np.array([0.0, 1.0])])
+        training_data_matrix.append([np.array(emb_matrix), np.array([0.0, 1.0])])
+       
+
+    print("Shuffiling and saving training_data")
+    np.random.shuffle(training_data_avg)
+    np.random.shuffle(training_data_matrix)
+
+    np.save("training_data_avg.npy", training_data_avg)
+    np.save("training_data_matrix.npy", training_data_matrix)
+    print("Saved training data")
+    
+    
+def pre_process_and_clean_training_data():
     POS_PATH = "../Twitter_DataSet/train_pos_full_nodup.txt"
     NEG_PATH = "../Twitter_DataSet/train_neg_full_nodup.txt"
 
@@ -151,6 +187,10 @@ def pre_process_test_dat():
 
     
 if __name__ == "__main__": 
-    pre_process_test_dat()
+    ft = fasttext.load_model('cc.en.300.bin')
+    ## reduce dim to 100
+    fasttext.util.reduce_model(ft, 100)
+    print(f"Loaded model word embeddings have dim = {ft.get_dimension()}")
+    get_word_embeddings(ft)
         
     
