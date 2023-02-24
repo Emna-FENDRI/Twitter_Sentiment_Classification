@@ -1,4 +1,4 @@
-# ML_Project2: Text Sentiment Classification
+# Machine Learning Project: Text Sentiment Classification
 
 ## Team (AAE) Members:
 Emna Fendri : emna.fendri@epfl.ch
