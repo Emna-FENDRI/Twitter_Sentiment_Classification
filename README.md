@@ -1,4 +1,4 @@
-# Machine Learning Project: Text Sentiment Classification
+# EPFL CS-433 Machine Learning Project: Sentiment Analysis
 
 ## Team (AAE) Members:
 Emna Fendri : emna.fendri@epfl.ch
